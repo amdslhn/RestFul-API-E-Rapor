@@ -132,10 +132,10 @@ async function register(req, res, next) {
 async function login(req, res, next) {
   try {
     const { email, password } = req.body;
-    const q =
-      "SELECT id, nama, email, password_hash, role FROM users WHERE email = $1";
+    const q = "SELECT id, nama, email, password_hash, role FROM users WHERE email = $1";
     const { rows } = await db.query(q, [email]);
     const user = rows[0];
+    
     if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
     const ok = await comparePassword(password, user.password_hash);
@@ -148,16 +148,18 @@ async function login(req, res, next) {
       name: user.nama,
     });
 
-    // Kirim token di cookie (DIPERBAIKI AGAR BISA DIBACA BROWSER)
+    // 1. Kirim token di cookie (BIARKAN INI - Buat Auth otomatis & Aman)
     res.cookie('token', token, {
-    httpOnly: true,
-    secure: true,       
-    sameSite: 'none',    
-    maxAge: 5 * 60 * 1000   
-});
+      httpOnly: true,
+      secure: true,       
+      sameSite: 'none',    
+      maxAge: 5 * 60 * 1000   
+    });
 
-    // Kirim data user tanpa token di body (FORMAT TETAP)
+    // 2. Kirim token & user di body (INI YANG BARU - Buat Frontend baca)
     res.json({
+      message: "Login berhasil",
+      accessToken: token, // <--- INI DITAMBAHKAN
       user: {
         id: user.id,
         nama: user.nama,
@@ -165,6 +167,7 @@ async function login(req, res, next) {
         role: user.role,
       },
     });
+
   } catch (err) {
     next(err);
   }
