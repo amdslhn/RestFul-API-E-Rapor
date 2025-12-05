@@ -16,6 +16,7 @@ const { errorHandler } = require('./src/middlewares/errorHandler');
 
 const app = express();
 
+app.set('trust proxy', 1);
 app.use(cors({
   origin: ["https://fe-e-rapor-production.up.railway.app", "http://localhost:3000", "http://192.168.56.1:3000"],
   credentials: true,
