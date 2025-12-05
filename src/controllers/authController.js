@@ -150,7 +150,7 @@ async function login(req, res, next) {
 
     // 1. Kirim token di cookie (BIARKAN INI - Buat Auth otomatis & Aman)
     res.cookie('token', token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,       
       sameSite: 'none',    
       maxAge: 5 * 60 * 1000   
