@@ -148,25 +148,34 @@ async function login(req, res, next) {
       name: user.nama,
     });
 
-    // 1. Kirim token di cookie (BIARKAN INI - Buat Auth otomatis & Aman)
     res.cookie('token', token, {
-      httpOnly: false,
-      secure: true,       
-      sameSite: 'none',    
-      maxAge: 5 * 60 * 1000   
-    });
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+  maxAge: 5 * 60 * 1000,
+  path: '/'
+});
 
-    // 2. Kirim token & user di body (INI YANG BARU - Buat Frontend baca)
-    res.json({
-      message: "Login berhasil",
-      accessToken: token, // <--- INI DITAMBAHKAN
-      user: {
-        id: user.id,
-        nama: user.nama,
-        email: user.email,
-        role: user.role,
-      },
-    });
+// 2. Cookie untuk FE (boleh dibaca JavaScript)
+res.cookie('token_client', token, {
+  httpOnly: false,
+  secure: true,
+  sameSite: 'none',
+  maxAge: 5 * 60 * 1000,
+  path: '/'
+});
+
+// 3. Body response tetap boleh
+res.json({
+  message: "Login berhasil",
+  accessToken: token,
+  user: {
+    id: user.id,
+    nama: user.nama,
+    email: user.email,
+    role: user.role,
+  },
+});
 
   } catch (err) {
     next(err);

@@ -16,17 +16,30 @@ const { errorHandler } = require('./src/middlewares/errorHandler');
 
 const app = express();
 
+// WAJIB UNTUK COOKIE SECURE DI RAILWAY
 app.set('trust proxy', 1);
+
+// FIX CORS
 app.use(cors({
-  origin: ["https://fe-e-rapor-production.up.railway.app", "http://localhost:3000", "http://192.168.56.1:3000"],
+  origin: [
+    "https://fe-e-rapor-production.up.railway.app",
+    "http://localhost:3000",
+    "http://192.168.56.1:3000"
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
+
+// FIX important: ensure credentials header always exists
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.set('trust proxy', true);
 
 // routes
 app.use('/api/auth', authRoute);
