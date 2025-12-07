@@ -17,7 +17,7 @@ router.get('/me', authenticate, authMe);
 
 router.post('/logout', authenticate, auditLog, logout);
 
-router.post('/unlock/:id', authenticate, auditLog, unlockScreen);
+router.post('/unlock/:id', authenticate, unlockScreen);
 
 
 module.exports = router;
