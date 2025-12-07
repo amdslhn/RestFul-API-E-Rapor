@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, login, authMe, register, logout } = require('../controllers/authController');
+const { registerUser, login, authMe, register, logout, unlockScreen } = require('../controllers/authController');
 const { authenticate } = require('../middlewares/auth');
 const { allowRoles } = require('../middlewares/roles');
 const { auditLog } = require('../middlewares/audit');
@@ -16,6 +16,8 @@ router.post('/login', login);
 router.get('/me', authenticate, authMe);
 
 router.post('/logout', authenticate, auditLog, logout);
+
+router.post('/unlock/:id', authenticate, auditLog, unlockScreen);
 
 
 module.exports = router;

@@ -182,7 +182,7 @@ async function login(req, res, next) {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
-      maxAge: 5 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
       path: '/',
     });
 
@@ -269,5 +269,41 @@ const logout = (req, res, next) => {
   }
 };
 
+async function unlockScreen(req, res, next) {
+  try {
+    // UBAH DISINI: Ambil ID dari params (URL), bukan dari token
+    const { id } = req.params; 
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ message: "Password wajib diisi" });
+    }
+
+    // Ambil hash password dari DB berdasarkan ID param
+    const q = "SELECT password_hash FROM users WHERE id = $1";
+    const { rows } = await db.query(q, [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
+
+    // Bandingkan password
+    const ok = await comparePassword(password, rows[0].password_hash);
+
+    if (!ok) {
+      return res.status(401).json({ message: "Password salah" });
+    }
+
+    // Sukses
+    res.status(200).json({ 
+      success: true, 
+      message: "Layar berhasil dibuka" 
+    });
+
+  } catch (err) {
+    next(err);
+  }
+}
+
 // EXPORT DIPERBAIKI (HAPUS DUPLIKAT)
-module.exports = { register, registerUser, login, authMe, logout };
+module.exports = { register, registerUser, login, authMe, logout, unlockScreen };
