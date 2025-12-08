@@ -50,8 +50,6 @@ app.use('/api/nilai', nilaiRoute);
 app.use('/api/guru', guruRoute);
 app.use('/api/audit', auditRoute);
 
-// health
-app.get('/health', (req, res) => res.json({ ok: true }));
 
 // error handler
 app.use(errorHandler);
